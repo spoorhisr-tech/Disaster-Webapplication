@@ -22,21 +22,39 @@ export function DistributionsView() {
     setLoading(true);
     setError(null);
     try {
-      const [distData, resData, reqData] = await Promise.all([
+      const [distData, resData, reqData, emergData] = await Promise.all([
         api.getDistributions(),
         api.getResources(),
-        api.getReliefRequests(),
+        api.getReliefRequests().catch(() => []),
+        api.getEmergencyRequests().catch(() => []),
       ]);
       setDistributions(Array.isArray(distData) ? distData : []);
       const resList = Array.isArray(resData) ? resData : [];
-      const reqList = Array.isArray(reqData) ? reqData : [];
-      setResources(resList);
-      setRequests(reqList);
+      
+      const reliefList = (Array.isArray(reqData) ? reqData : []).map((r) => ({
+        request_id: r.request_id,
+        citizen_name: r.citizen_name,
+        resource_type_needed: r.resource_type_needed,
+        quantity_needed: r.quantity_needed,
+        status: r.status,
+      }));
 
-      if (reqList.length > 0 && !formData.request_id) {
+      const emergencyList = (Array.isArray(emergData) ? emergData : []).map((r) => ({
+        request_id: r.request_number,
+        citizen_name: `${r.requester_name} (${r.location_name})`,
+        resource_type_needed: r.request_type,
+        quantity_needed: Math.max(1, (r.people_affected || 1) * 2),
+        status: r.status.toUpperCase(),
+      }));
+
+      const allRequests = [...reliefList, ...emergencyList];
+      setResources(resList);
+      setRequests(allRequests);
+
+      if (allRequests.length > 0 && !formData.request_id) {
         setFormData((prev) => ({
           ...prev,
-          request_id: reqList[0].request_id,
+          request_id: allRequests[0].request_id,
           resource_id: resList[0]?.resource_id || '',
         }));
       }
@@ -53,7 +71,7 @@ export function DistributionsView() {
 
   const openModal = () => {
     setError(null);
-    const activeReq = requests.find((r) => r.status !== 'RESOLVED') || requests[0];
+    const activeReq = requests.find((r) => r.status !== 'RESOLVED' && r.status !== 'FULFILLED') || requests[0];
     setFormData({
       request_id: activeReq?.request_id || '',
       resource_id: resources[0]?.resource_id || '',

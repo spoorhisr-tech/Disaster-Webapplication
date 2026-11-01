@@ -14,10 +14,16 @@ class EmergencyRequest extends Model
         'request_type',
         'description',
         'location_name',
+        'shelter_id',
         'people_affected',
         'priority',
         'status',
         'requester_name',
         'requester_phone',
     ];
+
+    public function shelter()
+    {
+        return $this->belongsTo(Shelter::class, 'shelter_id', 'shelter_id');
+    }
 }

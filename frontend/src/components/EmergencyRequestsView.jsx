@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { StatusBadge } from './StatusBadge';
-import { Plus, RefreshCw, AlertCircle, Phone, MapPin, Users, CheckCircle2, XCircle } from 'lucide-react';
+import { Plus, RefreshCw, AlertCircle, Phone, MapPin, Users, CheckCircle2, XCircle, Home } from 'lucide-react';
 
 export function EmergencyRequestsView() {
   const [requests, setRequests] = useState([]);
   const [events, setEvents] = useState([]);
+  const [shelters, setShelters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +17,7 @@ export function EmergencyRequestsView() {
     request_type: 'Drinking Water & Rations',
     description: '',
     location_name: '',
+    shelter_id: '',
     people_affected: 4,
     priority: 'high',
     requester_name: '',
@@ -26,13 +28,15 @@ export function EmergencyRequestsView() {
     setLoading(true);
     setError(null);
     try {
-      const [reqData, eventData] = await Promise.all([
+      const [reqData, eventData, shelterData] = await Promise.all([
         api.getEmergencyRequests(),
         api.getDisasterEvents(),
+        api.getShelters().catch(() => []),
       ]);
       setRequests(Array.isArray(reqData) ? reqData : []);
       const eventList = Array.isArray(eventData) ? eventData : [];
       setEvents(eventList);
+      setShelters(Array.isArray(shelterData) ? shelterData : []);
       if (eventList.length > 0 && !formData.disaster_event_id) {
         setFormData((prev) => ({ ...prev, disaster_event_id: eventList[0].id }));
       }
@@ -56,6 +60,7 @@ export function EmergencyRequestsView() {
         ...formData,
         disaster_event_id: Number(formData.disaster_event_id),
         people_affected: Number(formData.people_affected),
+        shelter_id: formData.shelter_id ? Number(formData.shelter_id) : undefined,
       });
       setIsModalOpen(false);
       setFormData({
@@ -63,6 +68,7 @@ export function EmergencyRequestsView() {
         request_type: 'Drinking Water & Rations',
         description: '',
         location_name: '',
+        shelter_id: '',
         people_affected: 4,
         priority: 'high',
         requester_name: '',
@@ -174,6 +180,12 @@ export function EmergencyRequestsView() {
                         <Users className="w-3.5 h-3.5 text-gray-400" />
                         {req.people_affected} people affected
                       </div>
+                      {req.shelter && (
+                        <div className="text-xs text-teal-700 font-medium mt-1 inline-flex items-center gap-1 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                          <Home className="w-3 h-3 text-teal-600" />
+                          <span>Assigned: {req.shelter.shelter_name} ({req.shelter.area})</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-4">
                       <StatusBadge status={req.priority} />
@@ -302,6 +314,44 @@ export function EmergencyRequestsView() {
                   </select>
                 </div>
               </div>
+
+              {formData.request_type === 'Temporary Shelter' && (
+                <div className="p-3 bg-teal-50 border border-teal-200 rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-teal-900">
+                      Evacuation Shelter Placement
+                    </label>
+                    <span className="text-[11px] text-teal-700">Auto-matches Area or choose below</span>
+                  </div>
+                  <select
+                    value={formData.shelter_id}
+                    onChange={(e) => {
+                      const selectedId = e.target.value;
+                      const matched = shelters.find((s) => String(s.shelter_id) === String(selectedId));
+                      setFormData({
+                        ...formData,
+                        shelter_id: selectedId,
+                        location_name: matched ? matched.area : formData.location_name,
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-teal-300 rounded-lg text-sm bg-white"
+                  >
+                    <option value="">-- Auto-match shelter by Location Area --</option>
+                    {shelters.map((s) => {
+                      const avail = (Number(s.capacity) || 0) - (Number(s.current_occupancy) || 0);
+                      const isFull = s.status === 'FULL' || avail <= 0;
+                      return (
+                        <option key={s.shelter_id} value={s.shelter_id} disabled={isFull}>
+                          {s.shelter_name} ({s.area}) — {isFull ? 'FULL' : `${avail} spots available`}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <p className="text-[11px] text-teal-700">
+                    💡 If left on Auto-match, dispatching will match the open shelter in <strong className="font-semibold">{formData.location_name || 'your location area'}</strong> and update its live capacity automatically.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-[#172033] mb-1">Number of People Affected *</label>

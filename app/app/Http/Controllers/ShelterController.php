@@ -37,6 +37,19 @@ class ShelterController extends Controller
 
         $validated['current_occupancy'] = $validated['current_occupancy'] ?? 0;
 
+        if ($validated['current_occupancy'] > $validated['capacity']) {
+            return response()->json([
+                'message' => 'Current occupancy cannot exceed shelter capacity.',
+                'errors' => [
+                    'current_occupancy' => ['Occupancy cannot exceed capacity (' . $validated['capacity'] . ').']
+                ]
+            ], 422);
+        }
+
+        if ($validated['current_occupancy'] >= $validated['capacity'] && $validated['status'] !== 'CLOSED') {
+            $validated['status'] = 'FULL';
+        }
+
         $shelter = Shelter::create($validated);
 
         return response()->json([
@@ -59,6 +72,24 @@ class ShelterController extends Controller
             'contact_person' => 'sometimes|nullable|string|max:100',
             'contact_phone' => 'sometimes|nullable|string|max:30',
         ]);
+
+        $effectiveCapacity = $validated['capacity'] ?? $shelter->capacity;
+        $effectiveOccupancy = $validated['current_occupancy'] ?? $shelter->current_occupancy;
+
+        if ($effectiveOccupancy > $effectiveCapacity) {
+            return response()->json([
+                'message' => 'Current occupancy cannot exceed shelter capacity.',
+                'errors' => [
+                    'current_occupancy' => ['Occupancy cannot exceed capacity (' . $effectiveCapacity . ').']
+                ]
+            ], 422);
+        }
+
+        if ($effectiveOccupancy >= $effectiveCapacity && (!isset($validated['status']) || $validated['status'] !== 'CLOSED')) {
+            $validated['status'] = 'FULL';
+        } elseif ($effectiveOccupancy < $effectiveCapacity && (!isset($validated['status']) || $validated['status'] === 'FULL')) {
+            $validated['status'] = 'OPEN';
+        }
 
         $shelter->update($validated);
 

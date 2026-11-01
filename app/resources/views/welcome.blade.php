@@ -13,7 +13,7 @@
         <input name="title" value="Bengaluru Flood Test" required><br><br>
 
         <label>Slug:</label>
-        <input name="slug" value="delete-test-001" required>
+        <input name="slug" value="event-{{ time() }}" required>
         <label>Type:</label>
         <input name="type" value="Flood" required><br><br>
 
@@ -58,8 +58,8 @@
             data.longitude = Number(data.longitude);
             data.radius_km = Number(data.radius_km);
             try {
-                const response = await fetch('/api/disaster-events/4', {
-                    method: 'DELETE',
+                const response = await fetch('/api/disaster-events', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
