@@ -1,4 +1,4 @@
-// Central API service for connecting to Laravel Backend (http://localhost:8000/api)
+// Central API service connecting to Laravel Backend via Vite Proxy
 const API_BASE = '/api';
 
 async function request(endpoint, options = {}) {
@@ -45,14 +45,32 @@ export const api = {
   getIncidentReport: (id) => request(`/incident-reports/${id}`),
   createIncidentReport: (data) => request('/incident-reports', { method: 'POST', body: JSON.stringify(data) }),
 
-  // 4. Resources
+  // 4. Warehouse Resources
   getResources: () => request('/resources'),
   getResource: (id) => request(`/resources/${id}`),
   createResource: (data) => request('/resources', { method: 'POST', body: JSON.stringify(data) }),
   updateResource: (id, data) => request(`/resources/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
 
-  // 5. Distributions
+  // 5. Aid Distributions
   getDistributions: () => request('/distributions'),
   getDistribution: (id) => request(`/distributions/${id}`),
   createDistribution: (data) => request('/distributions', { method: 'POST', body: JSON.stringify(data) }),
+
+  // 6. Shelters (Real DB Table)
+  getShelters: () => request('/shelters'),
+  getShelter: (id) => request(`/shelters/${id}`),
+  createShelter: (data) => request('/shelters', { method: 'POST', body: JSON.stringify(data) }),
+  updateShelter: (id, data) => request(`/shelters/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // 7. Volunteers (Real DB Table)
+  getVolunteers: () => request('/volunteers'),
+  getVolunteer: (id) => request(`/volunteers/${id}`),
+  createVolunteer: (data) => request('/volunteers', { method: 'POST', body: JSON.stringify(data) }),
+  updateVolunteer: (id, data) => request(`/volunteers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // 8. Relief Requests (Real DB Table matching distributions)
+  getReliefRequests: () => request('/relief-requests'),
+  getReliefRequest: (id) => request(`/relief-requests/${id}`),
+  createReliefRequest: (data) => request('/relief-requests', { method: 'POST', body: JSON.stringify(data) }),
+  updateReliefRequest: (id, data) => request(`/relief-requests/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
 };

@@ -6,6 +6,8 @@ import { EmergencyRequestsView } from './components/EmergencyRequestsView';
 import { IncidentReportsView } from './components/IncidentReportsView';
 import { ResourcesView } from './components/ResourcesView';
 import { DistributionsView } from './components/DistributionsView';
+import { SheltersView } from './components/SheltersView';
+import { VolunteersView } from './components/VolunteersView';
 
 export function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -21,15 +23,17 @@ export function App() {
         {activeTab === 'incidents' && <IncidentReportsView />}
         {activeTab === 'resources' && <ResourcesView />}
         {activeTab === 'distributions' && <DistributionsView />}
+        {activeTab === 'shelters' && <SheltersView />}
+        {activeTab === 'volunteers' && <VolunteersView />}
       </main>
 
       <footer className="bg-white border-t border-[#D8DEE8] py-6 mt-auto text-xs text-[#5B6475] text-center">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="font-medium text-[#172033]">
-            Disaster Relief and Emergency Management System (Academic Prototype)
+          <p className="font-semibold text-[#172033]">
+            Disaster Relief and Emergency Management System
           </p>
           <p className="mt-1">
-            Connected to Laravel API Backend at <code>http://localhost:8000/api</code>
+            Connected to Live MySQL Database (<code>disaster_relief_db</code>) &amp; Laravel 12 API Backend (<code>http://localhost:8000/api</code>)
           </p>
         </div>
       </footer>

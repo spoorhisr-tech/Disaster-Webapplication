@@ -6,7 +6,9 @@ import {
   Package, 
   Share2, 
   LayoutDashboard,
-  ShieldAlert
+  ShieldAlert,
+  Home,
+  HeartHandshake
 } from 'lucide-react';
 
 export function Navbar({ activeTab, setActiveTab }) {
@@ -17,6 +19,8 @@ export function Navbar({ activeTab, setActiveTab }) {
     { id: 'incidents', label: 'Incident Reports', icon: FileText },
     { id: 'resources', label: 'Resources Inventory', icon: Package },
     { id: 'distributions', label: 'Distribution Ledger', icon: Share2 },
+    { id: 'shelters', label: 'Shelters', icon: Home },
+    { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake },
   ];
 
   return (
@@ -31,14 +35,14 @@ export function Navbar({ activeTab, setActiveTab }) {
               <h1 className="text-lg font-bold text-[#172033] leading-tight">
                 Disaster Relief Management
               </h1>
-              <p className="text-xs text-[#5B6475]">Emergency Coordination Platform</p>
+              <p className="text-xs text-[#5B6475]">Emergency Operations Command</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              API Connected
+              MySQL Database Connected
             </span>
           </div>
         </div>
@@ -52,7 +56,7 @@ export function Navbar({ activeTab, setActiveTab }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'border-[#1D4ED8] text-[#1D4ED8]'
                     : 'border-transparent text-[#5B6475] hover:text-[#172033] hover:border-[#D8DEE8]'

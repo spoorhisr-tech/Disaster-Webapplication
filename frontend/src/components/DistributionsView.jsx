@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
-import { Plus, RefreshCw, AlertCircle, Share2, Calendar, FileText } from 'lucide-react';
+import { Plus, RefreshCw, AlertCircle, Calendar } from 'lucide-react';
 
 export function DistributionsView() {
   const [distributions, setDistributions] = useState([]);
   const [resources, setResources] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,23 +14,31 @@ export function DistributionsView() {
   const [formData, setFormData] = useState({
     request_id: '',
     resource_id: '',
-    quantity_distributed: 10,
-    notes: 'Dispatched via emergency response vehicle.',
+    quantity_distributed: 1,
+    notes: '',
   });
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const [distData, resData] = await Promise.all([
+      const [distData, resData, reqData] = await Promise.all([
         api.getDistributions(),
         api.getResources(),
+        api.getReliefRequests(),
       ]);
       setDistributions(Array.isArray(distData) ? distData : []);
       const resList = Array.isArray(resData) ? resData : [];
+      const reqList = Array.isArray(reqData) ? reqData : [];
       setResources(resList);
-      if (resList.length > 0 && !formData.resource_id) {
-        setFormData((prev) => ({ ...prev, resource_id: resList[0].resource_id }));
+      setRequests(reqList);
+
+      if (reqList.length > 0 && !formData.request_id) {
+        setFormData((prev) => ({
+          ...prev,
+          request_id: reqList[0].request_id,
+          resource_id: resList[0]?.resource_id || '',
+        }));
       }
     } catch (err) {
       setError(err.message);
@@ -42,6 +51,18 @@ export function DistributionsView() {
     fetchData();
   }, []);
 
+  const openModal = () => {
+    setError(null);
+    const activeReq = requests.find((r) => r.status !== 'RESOLVED') || requests[0];
+    setFormData({
+      request_id: activeReq?.request_id || '',
+      resource_id: resources[0]?.resource_id || '',
+      quantity_distributed: activeReq?.quantity_needed || 1,
+      notes: '',
+    });
+    setIsModalOpen(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -53,12 +74,6 @@ export function DistributionsView() {
         quantity_distributed: Number(formData.quantity_distributed),
       });
       setIsModalOpen(false);
-      setFormData({
-        request_id: '',
-        resource_id: resources[0]?.resource_id || '',
-        quantity_distributed: 10,
-        notes: '',
-      });
       await fetchData();
     } catch (err) {
       setError(err.message);
@@ -86,7 +101,7 @@ export function DistributionsView() {
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={openModal}
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-medium rounded-lg shadow-xs transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
@@ -139,17 +154,17 @@ export function DistributionsView() {
                       {d.request_id}
                     </td>
                     <td className="px-5 py-4 text-xs text-[#5B6475]">
-                      Item ID: {d.resource_id}
+                      Item #{d.resource_id}
                     </td>
                     <td className="px-5 py-4">
-                      <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-xs">
+                      <span className="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 text-xs">
                         {d.quantity_distributed} units
                       </span>
                     </td>
                     <td className="px-5 py-4 text-xs text-[#5B6475]">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                        {d.distributed_at ? new Date(d.distributed_at).toLocaleString() : 'Just now'}
+                        {d.distributed_at ? new Date(d.distributed_at).toLocaleString() : 'Recent'}
                       </div>
                     </td>
                     <td className="px-5 py-4 text-xs text-[#5B6475] max-w-xs truncate">
@@ -163,42 +178,60 @@ export function DistributionsView() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal Connected to Database */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#D8DEE8] max-w-md w-full p-6 shadow-xl">
             <h3 className="text-xl font-bold text-[#172033] mb-4">Record Aid Disbursement</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#172033] mb-1">Target Request ID *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. REQ-001 or Request UUID"
-                  value={formData.request_id}
-                  onChange={(e) => setFormData({ ...formData, request_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#D8DEE8] rounded-lg text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172033] mb-1">Stocked Resource *</label>
+                <label className="block text-xs font-semibold text-[#172033] mb-1">
+                  Select Pending Database Request *
+                </label>
                 <select
                   required
-                  value={formData.resource_id}
-                  onChange={(e) => setFormData({ ...formData, resource_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#D8DEE8] rounded-lg text-sm"
+                  value={formData.request_id}
+                  onChange={(e) => {
+                    const reqId = e.target.value;
+                    const selected = requests.find((r) => r.request_id === reqId);
+                    setFormData({
+                      ...formData,
+                      request_id: reqId,
+                      quantity_distributed: selected ? selected.quantity_needed : formData.quantity_distributed,
+                    });
+                  }}
+                  className="w-full px-3 py-2 border border-[#D8DEE8] rounded-lg text-sm bg-white"
                 >
-                  {resources.map((r) => (
-                    <option key={r.resource_id} value={r.resource_id}>
-                      {r.item_name} ({r.quantity_available} {r.unit || 'units'} available)
+                  {requests.map((r) => (
+                    <option key={r.request_id} value={r.request_id}>
+                      {r.request_id} — {r.citizen_name} ({r.resource_type_needed}, Need: {r.quantity_needed}) [{r.status}]
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#172033] mb-1">Disbursement Quantity *</label>
+                <label className="block text-xs font-semibold text-[#172033] mb-1">
+                  Stocked Warehouse Supply *
+                </label>
+                <select
+                  required
+                  value={formData.resource_id}
+                  onChange={(e) => setFormData({ ...formData, resource_id: e.target.value })}
+                  className="w-full px-3 py-2 border border-[#D8DEE8] rounded-lg text-sm bg-white"
+                >
+                  {resources.map((r) => (
+                    <option key={r.resource_id} value={r.resource_id}>
+                      {r.item_name} ({r.quantity_available} {r.unit || 'units'} in {r.warehouse_location})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#172033] mb-1">
+                  Disbursement Quantity *
+                </label>
                 <input
                   type="number"
                   min="1"
@@ -210,12 +243,12 @@ export function DistributionsView() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#172033] mb-1">Notes / Dispatch Unit</label>
+                <label className="block text-xs font-semibold text-[#172033] mb-1">Dispatch Notes</label>
                 <textarea
                   rows={2}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Driver name, vehicle registration, delivery confirmation..."
+                  placeholder="Volunteer name, vehicle info, delivery confirmation..."
                   className="w-full px-3 py-2 border border-[#D8DEE8] rounded-lg text-sm resize-none"
                 />
               </div>
