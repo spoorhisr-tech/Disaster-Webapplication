@@ -1,0 +1,27 @@
+kind: wasmer.io/App.v0
+name: disaster-relief-fullstack
+owner: spoorhisr-tech
+package: .
+
+capabilities:
+  database:
+    engine: mysql
+
+env:
+  APP_NAME: "DisasterRelief"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  DB_CONNECTION: "mysql"
+  LOG_CHANNEL: "stderr"
+
+jobs:
+  - name: run-migrations-and-seeds
+    trigger: pre-deployment
+    execute:
+      command: php
+      cli_args:
+        - "artisan"
+        - "migrate"
+        - "--force"
+        - "--seed"
+
