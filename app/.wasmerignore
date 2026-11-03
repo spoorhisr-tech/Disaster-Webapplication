@@ -1,0 +1,12 @@
+# Wasmer package ignore
+.env
+node_modules/
+.git/
+.vscode/
+tests/
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+*.webc
+

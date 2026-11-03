@@ -49,7 +49,7 @@ return [
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', env('DB_NAME', 'disaster_relief_db')),
+            'database' => env('DB_NAME', env('DB_DATABASE', 'disaster_relief_db')),
             'username' => env('DB_USERNAME', env('DB_USER', 'root')),
             'password' => env('DB_PASSWORD', env('DB_PASS', '')),
             'unix_socket' => env('DB_SOCKET', ''),

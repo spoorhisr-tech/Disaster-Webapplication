@@ -1,6 +1,7 @@
 kind: wasmer.io/App.v0
-name: disaster-relief-fullstack
+name: WebApp
 owner: spoorhisr-tech
+app_id: da_KAmI3tXUmJPa
 package: .
 
 capabilities:
@@ -10,18 +11,21 @@ capabilities:
 env:
   APP_NAME: "DisasterRelief"
   APP_ENV: "production"
-  APP_DEBUG: "false"
+  APP_DEBUG: "true"
+  APP_KEY: "base64:mSAV+hR8FXG+hYkCfGcT5VIM6ARjHYdzmomJvg0XPtA="
   DB_CONNECTION: "mysql"
   LOG_CHANNEL: "stderr"
+  SESSION_DRIVER: "cookie"
+  CACHE_STORE: "array"
 
 jobs:
   - name: run-migrations-and-seeds
     trigger: pre-deployment
-    execute:
-      command: php
-      cli_args:
-        - "artisan"
-        - "migrate"
-        - "--force"
-        - "--seed"
-
+    action:
+      execute:
+        command: php
+        cli_args:
+          - "artisan"
+          - "migrate"
+          - "--force"
+          - "--seed"

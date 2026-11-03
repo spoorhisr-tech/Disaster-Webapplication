@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('emergency_requests', function (Blueprint $table) {
-            $table->integer('shelter_id')->nullable()->after('location_name');
-            $table->foreign('shelter_id')->references('shelter_id')->on('shelters')->nullOnDelete();
+            if (!Schema::hasColumn('emergency_requests', 'shelter_id')) {
+                $table->unsignedInteger('shelter_id')->nullable()->after('location_name');
+                $table->foreign('shelter_id')->references('shelter_id')->on('shelters')->nullOnDelete();
+            }
         });
     }
 
