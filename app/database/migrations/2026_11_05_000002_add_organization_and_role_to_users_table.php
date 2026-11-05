@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'organization'])->default('organization')->after('email');
-            $table->foreignId('organization_id')->nullable()->after('role')->constrained('organizations')->onDelete('set null');
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->enum('role', ['admin', 'organization'])->default('organization')->after('email');
+            }
+            if (!Schema::hasColumn('users', 'organization_id')) {
+                $table->foreignId('organization_id')->nullable()->after('role')->constrained('organizations')->onDelete('set null');
+            }
         });
     }
 
@@ -23,8 +27,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['organization_id']);
-            $table->dropColumn(['role', 'organization_id']);
+            if (Schema::hasColumn('users', 'organization_id')) {
+                $table->dropForeign(['organization_id']);
+                $table->dropColumn('organization_id');
+            }
+            if (Schema::hasColumn('users', 'role')) {
+                $table->dropColumn('role');
+            }
         });
     }
 };

@@ -121,3 +121,4 @@ class OrganizationController extends Controller
         return response()->json($resources);
     }
 }
+

@@ -47,3 +47,4 @@ class Organization extends Model
         return $this->hasMany(Resource::class, 'organization_id', 'id');
     }
 }
+
