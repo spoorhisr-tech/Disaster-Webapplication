@@ -95,7 +95,7 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Sector 9 Industrial Fire Incident',
                 'type' => 'Fire',
-                'severity' => 'Medium',
+                'severity' => 'Moderate',
                 'status' => 'contained',
                 'description' => 'Chemical warehouse fire safely contained by disaster response squads; smoke dissipation and air monitoring underway.',
                 'location_name' => 'Sector 9 Industrial Corridor',
