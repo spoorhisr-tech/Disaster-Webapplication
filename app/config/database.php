@@ -60,7 +60,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => (env('MYSQL_ATTR_SSL_CA') && file_exists(env('MYSQL_ATTR_SSL_CA'))) ? env('MYSQL_ATTR_SSL_CA') : null,
+                (defined('Pdo\Mysql::ATTR_SSL_CA') ? Mysql::ATTR_SSL_CA : (defined('PDO::MYSQL_ATTR_SSL_CA') ? \PDO::MYSQL_ATTR_SSL_CA : 1007)) => (env('MYSQL_ATTR_SSL_CA') && file_exists(env('MYSQL_ATTR_SSL_CA'))) ? env('MYSQL_ATTR_SSL_CA') : (file_exists(base_path('config/cacert.pem')) ? base_path('config/cacert.pem') : null),
                 (defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT') ? Mysql::ATTR_SSL_VERIFY_SERVER_CERT : (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT') ? \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT : 1014)) => env('MYSQL_ATTR_SSL_VERIFY', false),
             ], fn($val) => $val !== null) : [],
         ],
@@ -81,7 +81,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => (env('MYSQL_ATTR_SSL_CA') && file_exists(env('MYSQL_ATTR_SSL_CA'))) ? env('MYSQL_ATTR_SSL_CA') : null,
+                (defined('Pdo\Mysql::ATTR_SSL_CA') ? Mysql::ATTR_SSL_CA : (defined('PDO::MYSQL_ATTR_SSL_CA') ? \PDO::MYSQL_ATTR_SSL_CA : 1007)) => (env('MYSQL_ATTR_SSL_CA') && file_exists(env('MYSQL_ATTR_SSL_CA'))) ? env('MYSQL_ATTR_SSL_CA') : (file_exists(base_path('config/cacert.pem')) ? base_path('config/cacert.pem') : null),
                 (defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT') ? Mysql::ATTR_SSL_VERIFY_SERVER_CERT : (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT') ? \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT : 1014)) => env('MYSQL_ATTR_SSL_VERIFY', false),
             ], fn($val) => $val !== null) : [],
         ],
