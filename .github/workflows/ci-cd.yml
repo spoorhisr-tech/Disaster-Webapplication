@@ -7,6 +7,11 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# Set default working directory to 'app' where composer.json and wasmer.toml live
+defaults:
+  run:
+    working-directory: app
+
 jobs:
   # ============================================================================
   # JOB 1: CONTINUOUS INTEGRATION (CI)
@@ -35,7 +40,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('app/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer Dependencies
@@ -76,4 +81,3 @@ jobs:
           WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
         run: |
           wasmer deploy --non-interactive
-
