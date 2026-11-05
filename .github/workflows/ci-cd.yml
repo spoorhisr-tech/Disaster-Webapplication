@@ -28,7 +28,7 @@ jobs:
       - name: Setup PHP Environment
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4' # Required by Symfony 8 components (>= 8.4.1)
           extensions: mbstring, xml, ctype, iconv, intl, pdo, sqlite, pdo_sqlite, bcmath, curl
           coverage: none
 
@@ -71,13 +71,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify Deployment Secrets
+        env:
+          WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
+        run: |
+          if [ -z "$WASMER_TOKEN" ]; then
+            echo "::error::WASMER_TOKEN secret is missing! Please add it in GitHub Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          echo "WASMER_TOKEN is verified."
+
       - name: Install Wasmer CLI
         run: |
           curl https://get.wasmer.io -sSfL | sh
           echo "$HOME/.wasmer/bin" >> $GITHUB_PATH
 
+      - name: Authenticate with Wasmer
+        env:
+          WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
+        run: wasmer login "$WASMER_TOKEN"
+
       - name: Deploy to Wasmer Edge
         env:
           WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
-        run: |
-          wasmer deploy --non-interactive
+        run: wasmer deploy --non-interactive --no-tty --token="$WASMER_TOKEN"
