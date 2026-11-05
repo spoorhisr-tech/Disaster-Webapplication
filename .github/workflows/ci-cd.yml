@@ -109,5 +109,14 @@ jobs:
           sed -i "s/^version = .*/version = \"$NEW_VERSION\"/" wasmer.toml
           echo "Bumping wasmer.toml package version to: $NEW_VERSION"
 
+      - name: Inject TiDB Secrets into Manifest
+        env:
+          TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+        run: |
+          if [ -n "$TIDB_PASSWORD" ]; then
+            sed -i "s/\${DB_PASSWORD}/$TIDB_PASSWORD/g" app.yaml
+            echo "Successfully injected TIDB_PASSWORD into app.yaml"
+          fi
+
       - name: Deploy to Wasmer Edge
         run: wasmer deploy --non-interactive --no-wait

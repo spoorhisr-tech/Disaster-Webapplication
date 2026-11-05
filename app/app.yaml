@@ -14,7 +14,7 @@ env:
   DB_PORT: "4000"
   DB_DATABASE: "test"
   DB_USERNAME: "4RF8cAaQXxcVam6.root"
-  DB_PASSWORD: "eq5NxBAQZUoL2tqE"
+  DB_PASSWORD: "${DB_PASSWORD}"
   MYSQL_ATTR_SSL_CA: "/etc/ssl/certs/ca-certificates.crt"
   LOG_CHANNEL: "stderr"
   SESSION_DRIVER: "cookie"
