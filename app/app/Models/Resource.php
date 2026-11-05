@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Resource extends Model
 {
@@ -18,6 +19,12 @@ class Resource extends Model
         'quantity_available',
         'unit',
         'warehouse_location',
+        'organization_id',
         'last_updated',
     ];
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organization_id', 'id');
+    }
 }

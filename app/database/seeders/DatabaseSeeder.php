@@ -27,6 +27,31 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Disaster Relief Administrator',
                 'password' => Hash::make('Admin@123'),
+                'role' => 'admin',
+            ]
+        );
+
+        // 1b. Sample Organization & Coordinator User
+        $org = \App\Models\Organization::firstOrCreate(
+            ['registration_number' => 'NGO-2026-RED-CROSS'],
+            [
+                'name' => 'International Red Cross Relief Hub',
+                'type' => 'ngo',
+                'email' => 'contact@redcross-relief.org',
+                'phone' => '+91-9876543210',
+                'area' => 'Eastern Coastal District',
+                'status' => 'active',
+                'description' => 'First responder humanitarian NGO specializing in emergency medical triage, mobile shelter camps, and clean water distribution.',
+            ]
+        );
+
+        $orgUser = User::firstOrCreate(
+            ['email' => 'coordinator@redcross.org'],
+            [
+                'name' => 'Red Cross Field Coordinator',
+                'password' => Hash::make('Redcross@123'),
+                'role' => 'organization',
+                'organization_id' => $org->id,
             ]
         );
 

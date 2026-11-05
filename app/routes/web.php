@@ -12,6 +12,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Web Login View for Admins and Organizations
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
 Route::get('/migrate-setup', function () {
     try {
         Artisan::call('migrate:fresh', [

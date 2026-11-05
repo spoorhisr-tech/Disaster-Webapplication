@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Shelter extends Model
 {
@@ -18,7 +19,13 @@ class Shelter extends Model
         'capacity',
         'current_occupancy',
         'status',
+        'organization_id',
         'contact_person',
         'contact_phone',
     ];
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organization_id', 'id');
+    }
 }

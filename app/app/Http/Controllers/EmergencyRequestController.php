@@ -227,4 +227,36 @@ class EmergencyRequestController extends Controller
             'data' => $emergencyRequest,
         ]);
     }
+
+    /**
+     * Public search by tracking code (e.g. REQ-XXXXXXXX) for Citizen tracking page.
+     */
+    public function trackByCode(string $code): JsonResponse
+    {
+        $request = EmergencyRequest::with('shelter')
+            ->where('request_number', trim($code))
+            ->first();
+
+        if (!$request) {
+            return response()->json([
+                'message' => 'Emergency request not found for tracking code: ' . $code,
+            ], 404);
+        }
+
+        return response()->json([
+            'request_number' => $request->request_number,
+            'status' => $request->status,
+            'request_type' => $request->request_type,
+            'location_name' => $request->location_name,
+            'people_affected' => $request->people_affected,
+            'priority' => $request->priority,
+            'shelter' => $request->shelter ? [
+                'shelter_name' => $request->shelter->shelter_name,
+                'area' => $request->shelter->area,
+                'status' => $request->shelter->status,
+            ] : null,
+            'created_at' => $request->created_at,
+            'updated_at' => $request->updated_at,
+        ]);
+    }
 }
