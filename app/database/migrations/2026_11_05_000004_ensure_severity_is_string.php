@@ -26,3 +26,4 @@ return new class extends Migration
         // No down needed for string widening
     }
 };
+

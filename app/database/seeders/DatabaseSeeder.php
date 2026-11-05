@@ -117,7 +117,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'OPEN',
                 'contact_person' => 'Robert Vance',
                 'contact_phone' => '+1-555-0101',
-                'created_at' => now(),
             ]
         );
 
@@ -130,7 +129,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'OPEN',
                 'contact_person' => 'Sister Maria Santos',
                 'contact_phone' => '+1-555-0102',
-                'created_at' => now(),
             ]
         );
 
@@ -143,7 +141,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'FULL',
                 'contact_person' => 'Principal H. Sharma',
                 'contact_phone' => '+1-555-0103',
-                'created_at' => now(),
             ]
         );
 
@@ -156,7 +153,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'OPEN',
                 'contact_person' => 'David Miller',
                 'contact_phone' => '+1-555-0104',
-                'created_at' => now(),
             ]
         );
 
