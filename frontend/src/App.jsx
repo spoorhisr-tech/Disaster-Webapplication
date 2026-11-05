@@ -11,10 +11,44 @@ import { VolunteersView } from './components/VolunteersView';
 
 export function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }).catch(() => {});
+      }
+    } finally {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      setUser(null);
+      window.location.href = '/login';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F7F9FC] text-[#172033] flex flex-col font-sans">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        user={user} 
+        onLogout={handleLogout} 
+      />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'dashboard' && <DashboardView onNavigate={setActiveTab} />}

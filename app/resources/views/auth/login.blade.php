@@ -73,7 +73,21 @@
                     </button>
                 </form>
 
-                <p class="text-center text-xs text-slate-400 mt-6">
+                <div class="mt-5 pt-4 border-t border-slate-100 dark:border-zinc-800">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-2 text-center">Quick Fill Demo Accounts:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="fillCredentials('admin@disaster-relief.org', 'Admin@123')"
+                            class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-zinc-700 hover:bg-blue-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium transition text-center hover:border-blue-300">
+                            🛡️ Admin
+                        </button>
+                        <button type="button" onclick="fillCredentials('coordinator@redcross.org', 'Redcross@123')"
+                            class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-zinc-700 hover:bg-blue-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium transition text-center hover:border-blue-300">
+                            🏥 Coordinator
+                        </button>
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-slate-400 mt-5">
                     Volunteers: Please use the offline-capable mobile Android app.
                 </p>
             </div>
@@ -81,6 +95,13 @@
     </div>
 
     <script>
+        function fillCredentials(email, pass) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = pass;
+            const alertBox = document.getElementById('alert-box');
+            if (alertBox) alertBox.className = 'hidden';
+        }
+
         const form = document.getElementById('login-form');
         const alertBox = document.getElementById('alert-box');
         const submitBtn = document.getElementById('submit-btn');

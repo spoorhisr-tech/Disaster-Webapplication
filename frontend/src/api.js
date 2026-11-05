@@ -3,10 +3,14 @@ const API_BASE = '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      ...authHeaders,
       ...options.headers,
     },
     ...options,
@@ -73,4 +77,8 @@ export const api = {
   getReliefRequest: (id) => request(`/relief-requests/${id}`),
   createReliefRequest: (data) => request('/relief-requests', { method: 'POST', body: JSON.stringify(data) }),
   updateReliefRequest: (id, data) => request(`/relief-requests/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // 9. Auth Operations
+  logout: () => request('/logout', { method: 'POST' }),
+  getMe: () => request('/me'),
 };

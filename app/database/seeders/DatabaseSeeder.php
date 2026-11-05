@@ -31,6 +31,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // 1a. Personal Admin Account
+        User::firstOrCreate(
+            ['email' => 'spoorhisr@gmail.com'],
+            [
+                'name' => 'Spoorthi (Administrator)',
+                'password' => Hash::make('Admin@123'),
+                'role' => 'admin',
+            ]
+        );
+
         // 1b. Sample Organization & Coordinator User
         $org = \App\Models\Organization::firstOrCreate(
             ['registration_number' => 'NGO-2026-RED-CROSS'],
