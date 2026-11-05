@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldAlert, Building2, Lock, Mail, Loader2, AlertCircle } from "lucide-react";
+import { Activity, Building2, Lock, Mail, Loader2, AlertCircle } from "lucide-react";
 
 export function CustomLogin() {
   const [email, setEmail] = useState("");
@@ -63,13 +63,18 @@ export function CustomLogin() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-lg border-border/80">
         <CardHeader className="space-y-2 text-center">
-          <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
-            <ShieldAlert className="size-6" />
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20">
+            <Activity className="size-8 stroke-[2.5]" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Disaster Response Portal
-          </CardTitle>
-          <CardDescription className="text-sm">
+          <div className="pt-1">
+            <CardTitle className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Disaster Relief Management
+            </CardTitle>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              Emergency Operations Command
+            </p>
+          </div>
+          <CardDescription className="text-xs pt-1">
             Sign in to your <span className="font-semibold text-foreground">Admin</span> or{" "}
             <span className="font-semibold text-foreground">Organization (NGO / Hospital)</span> account
           </CardDescription>
@@ -122,9 +127,9 @@ export function CustomLogin() {
               />
             </div>
 
-            <div className="rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2 font-medium text-foreground">
-                <Building2 className="size-4 text-primary" />
+            <div className="rounded-lg bg-blue-50/60 dark:bg-blue-950/20 p-3 text-xs text-muted-foreground border border-blue-100 dark:border-blue-900/40">
+              <div className="flex items-center gap-2 font-medium text-blue-900 dark:text-blue-300">
+                <Building2 className="size-4 text-blue-600" />
                 <span>Organization & Authority Gateway</span>
               </div>
               <p className="mt-1">
@@ -136,7 +141,7 @@ export function CustomLogin() {
           <CardFooter className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full font-semibold shadow-sm"
+              className="w-full font-semibold shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
               disabled={loading}
             >
               {loading ? (
