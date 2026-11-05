@@ -73,6 +73,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, sqlite, pdo_sqlite, bcmath, curl
+          coverage: none
+
+      - name: Install Production Composer Dependencies
+        run: composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
+
       - name: Verify Deployment Secrets
         env:
           WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
