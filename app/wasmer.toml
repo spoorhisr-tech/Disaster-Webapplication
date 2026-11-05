@@ -1,6 +1,6 @@
 [package]
 name = "spoorhisr-tech/webapp"
-version = "0.1.8"
+version = "0.1.9"
 description = "Disaster Relief and Emergency Management System"
 license = "MIT"
 

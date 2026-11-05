@@ -93,5 +93,11 @@ jobs:
           WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
         run: wasmer login "$WASMER_TOKEN"
 
+      - name: Auto-bump Package Version
+        run: |
+          NEW_VERSION="0.1.$(( ${{ github.run_number }} + 10 ))"
+          sed -i "s/^version = .*/version = \"$NEW_VERSION\"/" wasmer.toml
+          echo "Bumping wasmer.toml package version to: $NEW_VERSION"
+
       - name: Deploy to Wasmer Edge
         run: wasmer deploy --non-interactive --no-wait
