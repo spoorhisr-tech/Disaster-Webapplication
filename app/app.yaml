@@ -4,16 +4,18 @@ owner: spoorhisr-tech
 app_id: da_KAmI3tXUmJPa
 package: .
 
-capabilities:
-  database:
-    engine: mysql
-
 env:
   APP_NAME: "DisasterRelief"
   APP_ENV: "production"
   APP_DEBUG: "true"
   APP_KEY: "base64:mSAV+hR8FXG+hYkCfGcT5VIM6ARjHYdzmomJvg0XPtA="
   DB_CONNECTION: "mysql"
+  DB_HOST: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"
+  DB_PORT: "4000"
+  DB_DATABASE: "test"
+  DB_USERNAME: "4RF8cAaQXxcVam6.root"
+  DB_PASSWORD: "eq5NxBAQZUoL2tqE"
+  MYSQL_ATTR_SSL_CA: "/etc/ssl/certs/ca-certificates.crt"
   LOG_CHANNEL: "stderr"
   SESSION_DRIVER: "cookie"
   CACHE_STORE: "array"
